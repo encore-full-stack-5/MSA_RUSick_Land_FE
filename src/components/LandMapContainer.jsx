@@ -31,61 +31,56 @@ const LandMapContainer = () => {
       title: "엔코아",
     });
 
-    // 초기 infoWindow 내용
-    const contentString = `
-    <div class="map_info" style="cursor: pointer; padding: 10px; text-align: center;">
-      <h1>플레이 데이터</h1>
-      <p>클릭하여 상세 정보를 확인</p>
-    </div>
-  `;
+    //   // 초기 infoWindow 내용
+    //   const contentString = `
+    //   <div class="map_info" style="cursor: pointer; padding: 10px; text-align: center;">
+    //     <h1>플레이 데이터</h1>
+    //     <p>클릭하여 상세 정보를 확인</p>
+    //   </div>
+    // `;
 
-    // infoWindow 생성
-    const infoWindow = new window.naver.maps.InfoWindow({
-      content: contentString,
-      maxWidth: 200,
-      backgroundColor: "#eee",
-      borderColor: "#2db400",
-      borderWidth: 5,
-      anchorSize: new window.naver.maps.Size(30, 30),
-      anchorSkew: true,
-      anchorColor: "#eee",
-      pixelOffset: new window.naver.maps.Point(20, -20),
-    });
+    // // infoWindow 생성
+    // const infoWindow = new window.naver.maps.InfoWindow({
+    //   content: contentString,
+    //   maxWidth: 200,
+    //   backgroundColor: "#eee",
+    //   borderColor: "#2db400",
+    //   borderWidth: 5,
+    //   anchorSize: new window.naver.maps.Size(30, 30),
+    //   anchorSkew: true,
+    //   anchorColor: "#eee",
+    //   pixelOffset: new window.naver.maps.Point(20, -20),
+    // });
 
     // 마커 클릭 시 infoWindow 열고 닫기
     window.naver.maps.Event.addListener(marker, "click", function (e) {
-      if (infoWindow.getMap()) {
-        infoWindow.close();
-      } else {
-        infoWindow.open(mapInstance, marker);
-      }
+      const landDetail = {
+        // 매물 상세 정보(임시 데이터)
+        ownerName: "홍길동",
+        landName: "엔코아 플레이데이터",
+        landCategory: 3, // 1: 아파트, 2: 주택, 3: 상가로 변경
+        landArea: "30평",
+        landDescription: "서초캠퍼스",
+        landAddress: "서울특별시 서초구",
+        landDetailAddress: "효령로 335",
+        landPrice: 1000000000,
+        landBuiltDate: "2021-08-01",
+      };
+      setSelectedProperty(landDetail);
+      setShowDetail(true);
     });
 
-    // infoWindow가 열릴 때 클릭시 상세 정보 확인
-    window.naver.maps.Event.addListener(infoWindow, "domready", () => {
-      const infoWindowDiv = document.querySelector(".map_info");
-      if (infoWindowDiv) {
-        infoWindowDiv.addEventListener("click", () => {
-          console.log("infoWindowDiv 클릭됨");
-          const landDetail = {
-            // 매물 상세 정보(임시 데이터)
-            ownerName: "홍길동",
-            landName: "엔코아 플레이데이터",
-            landCategory: 3, // 1: 아파트, 2: 주택, 3: 상가로 변경
-            landArea: "30평",
-            landDescription: "서초캠퍼스",
-            landAddress: "서울특별시 서초구",
-            landDetailAddress: "효령로 335",
-            landPrice: 1000000000,
-            landBuiltDate: "2021-08-01",
-          };
-          setSelectedProperty(landDetail);
-          setShowDetail(true);
-        });
-      } else {
-        console.log("안열림");
-      }
-    });
+    // // infoWindow가 열릴 때 클릭시 상세 정보 확인
+    // window.naver.maps.Event.addListener(infoWindow, "domready", () => {
+    //   const infoWindowDiv = document.querySelector(".map_info");
+    //   if (infoWindowDiv) {
+    //     infoWindowDiv.addEventListener("click", () => {
+    //       console.log("infoWindowDiv 클릭됨");
+    //     });
+    //   } else {
+    //     console.log("안열림");
+    //   }
+    // });
 
     setMap(mapInstance);
     markerRef.current = marker;
