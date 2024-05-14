@@ -1,11 +1,19 @@
-import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
 import "./App.css";
-import NaverMap from "./component/NaverMap";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import MainPage from "./pages/MainPage";
+import LoadingPage from "./pages/LoadingPage";
 
 function App() {
-  return <NaverMap />;
+  return (
+    <>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<MainPage />} />
+          <Route path="/loading" element={<LoadingPage />} />
+        </Routes>
+      </BrowserRouter>
+    </>
+  );
 }
 
 export default App;
