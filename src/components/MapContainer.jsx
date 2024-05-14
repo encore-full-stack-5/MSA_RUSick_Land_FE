@@ -63,14 +63,39 @@ const MapContainer = () => {
 
   return (
     <>
-      <div className="size-full">
+      <div
+        style={{
+          width: "100%",
+          height: "7vh",
+        }}
+      >
+        <button onClick={login}>로그인</button>
+      </div>
+      <div
+        style={{
+          width: "100%",
+          height: "7vh",
+        }}
+      >
+        <input id="address" type="text" placeholder="주소를 입력하세요" />
+        <button onClick={searchAddressAndMoveMap}>검색</button>
+      </div>
+      <div
+        id="map"
+        style={{
+          width: "100%",
+          height: "86vh",
+        }}
+      ></div>
+
+      {/* <div className="size-full">
         <button onClick={login}>로그인</button>
       </div>
       <div>
         <input id="address" type="text" placeholder="주소를 입력하세요" />
         <button onClick={searchAddressAndMoveMap}>검색</button>
       </div>
-      <div id="map" className="w-full h-96"></div>
+      <div id="map" className="w-full h-auto"></div> */}
     </>
   );
 };
