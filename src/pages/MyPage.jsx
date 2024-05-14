@@ -27,16 +27,6 @@ function MyPage() {
     console.log(token.tokenType);
     try{
       const url = "http://192.168.0.19:8000/api/v1/lands";
-      // const requestBody = {
-      //   landName: "잠실리시온",
-      //   landCategory: 1,
-      //   landArea: "27평",
-      //   landDescription: "평범한 오피스텔",
-      //   landAddress: "서울시 송파구 올림픽로 269",
-      //   landDetailAddress: "702호",
-      //   landPrice: 380000000,
-      //   landBuiltDate: "2004-05-04T00:00:00"
-      // };
       const headers = {
         "Content-Type": "application/json",
         "Authorization": token.tokenType + " " + token.token
