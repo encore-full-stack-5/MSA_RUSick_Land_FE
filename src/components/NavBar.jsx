@@ -30,7 +30,7 @@ function NavBar() {
       >
         <Link to={"/"}>매물</Link>
         <Link to={"/iSale"}>분양</Link>
-        <Link to={"/interest"}>관심</Link>
+        <Link to={"/iSale/interest"}>관심</Link>
         <Link to={"/mypage"}>마이 페이지</Link>
       </div>
       <div className="border-t border-gray-400"></div>

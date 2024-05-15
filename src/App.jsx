@@ -8,6 +8,8 @@ import InterestPage from "./pages/InterestPage";
 import ISalePage from "./pages/ISalePage";
 import MyPage from "./pages/MyPage";
 import { useEffect } from "react";
+import ISaleInterest from "./components/ISaleInterest";
+import LandInterest from "./components/LandInterest";
 
 function App() {
   useEffect(() => {
@@ -26,9 +28,12 @@ function App() {
           <Route path="/" element={<MainPage />} />
           <Route path="/loading" element={<LoadingPage />} />
           <Route path="/iSale" element={<ISale />} />
-          <Route path="/interest" element={<InterestPage />} />
+          {/* <Route path="/interest" element={<InterestPage />} /> */}
           {/* <Route path="/isale" element={<ISalePage />} /> */}
           <Route path="/mypage" element={<MyPage />} />
+          <Route path="/iSale/interest" element={<ISaleInterest />} />
+          <Route path="/lands/interests" element={<LandInterest />} />
+
         </Routes>
       </BrowserRouter>
     </>

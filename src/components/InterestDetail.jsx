@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { getISaleDetail } from "../api/iSaleApi";
 
-const ISaleDetail = ({ selectedISale }) => {
+const InterestDetail = ({ selectedISale }) => {
   console.log(selectedISale);
   const [iSale, setISale] = useState([]);
 
@@ -11,7 +11,8 @@ const ISaleDetail = ({ selectedISale }) => {
 
   const fetchData = async () => {
     try {
-      const response = await getISaleDetail(selectedISale.id);
+        console.log(selectedISale.iSaleID);
+      const response = await getISaleDetail(selectedISale.iSaleID);
       setISale(response.data);
     } catch (error) {
       console.error("Error:", error);
@@ -19,24 +20,31 @@ const ISaleDetail = ({ selectedISale }) => {
     console.log(iSale);
   };
 
+  const category = (test) =>{
+    console.log(test)
+    if(test === 1) return "아파트"
+    else if(test ===2) return "주상복합"
+    else return "주택"
+  } 
   return (
     <>
-    <div>
       <div
         style={{
           display: "flex",
+          fontSize: "18px",
+          fontWeight:"600"
         }}
       >
         <h1>{iSale.iSaleName}</h1>
         <button>☆</button>
       </div>
       <div>
-        <p>{iSale.iSaleCategory}/분양중/10세대/25층</p>
+        <p>{category(iSale.iSaleCategory)}/분양중/10세대/25층</p>
       </div>
       <div>
-        <p>분양가</p>
-        <h3>가격</h3>
-        <p>면적</p>
+        <p style={{color:"#f34c59", fontSize:"13px"}}>분양가</p>
+        <h3 style={{fontSize:"18px", fontWeight:"bold", color:"#f34c59"}}>{iSale.iSaleSellPrice}</h3>
+        <p style={{fontSize:"13px", color:"#555"}}>{iSale.iSaleArea}m², 분양 {iSale.iSaleIn}, 입주 {iSale.iSaleIn}</p>
       </div>
       <hr />
       <div>
@@ -107,11 +115,8 @@ const ISaleDetail = ({ selectedISale }) => {
         <p>발표 ~~~~</p>
         <p>계약 ~~~~</p>
       </div>
-
-    </div>
-      
     </>
   );
 };
 
-export default ISaleDetail;
+export default InterestDetail;
