@@ -2,6 +2,7 @@ import "./App.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import MainPage from "./pages/MainPage";
 import LoadingPage from "./pages/LoadingPage";
+import ISale from "./pages/ISale";
 import NavBar from "./components/NavBar";
 import InterestPage from "./pages/InterestPage";
 import ISalePage from "./pages/ISalePage";
@@ -26,8 +27,9 @@ function App() {
           <Route path="/" element={<LandPage />} />
           <Route path="/loading" element={<LoadingPage />} />
           <Route path="/land" element={<LandPage />} />
+          <Route path="/iSale" element={<ISale />} />
           <Route path="/interest" element={<InterestPage />} />
-          <Route path="/isale" element={<ISalePage />} />
+          {/* <Route path="/isale" element={<ISalePage />} /> */}
           <Route path="/mypage" element={<MyPage />} />
         </Routes>
       </BrowserRouter>
