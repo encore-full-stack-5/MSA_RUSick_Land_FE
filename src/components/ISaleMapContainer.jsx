@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import ISaleDetail from "./ISaleDetail";
+import { getAlliSale } from "../api/iSaleApi";
 
 const ISaleMapContainer = () => {
   const login = () => {
@@ -13,10 +14,16 @@ const ISaleMapContainer = () => {
   const [markers, setMarkers] = useState([]);
   const [selectedAddress, setSelectedAddress] = useState("");
   const [isVisible, setIsVisible] = useState(false);
+  const [addresses, setAddress] = useState([]);
+  const [iSale, setISale] = useState([]);
+  const [selectedISale, setSelectedISale] = useState(null);
 
   useEffect(() => {
-    const initialLat = 37.48645289999874;
-    const initialLng = 127.02067890000285;
+    fetchData();
+    // const initialLat = 37.48645289999874;
+    // const initialLng = 127.02067890000285;
+    const initialLat = 37.5525;
+    const initialLng = 127.0311;
 
     const mapInstance = new window.naver.maps.Map("map", {
       center: new window.naver.maps.LatLng(initialLat, initialLng),
@@ -28,11 +35,6 @@ const ISaleMapContainer = () => {
 
   useEffect(() => {
     if (map) {
-      // map 상태가 설정된 후에 마커를 추가합니다.
-      const addresses = [
-        "서울시 서초구 효령로 335",
-        "서울시 서초구 효령로 341",
-      ];
       addresses.forEach((address) => {
         addMarkerByAddress(address, map); // map 인스턴스를 직접 전달합니다.
       });
@@ -42,10 +44,36 @@ const ISaleMapContainer = () => {
   const onClickVisible = (address) => {
     setIsVisible(true);
     setSelectedAddress(address);
+    const foundISale = iSale.find((sale) => sale.iSaleAddress === address);
+    setSelectedISale(foundISale);
   };
   const onClickVisible2 = () => {
     setIsVisible(false);
   };
+
+  const fetchData = async () => {
+    try {
+      const response = await getAlliSale();
+      console.log(response);
+      setISale(response.data);
+      const newAddresses = response.data
+        .map((el) => el.iSaleAddress)
+        .filter((address) => !addresses.includes(address));
+      setAddress((addresses) => [...addresses, ...newAddresses]);
+    } catch (error) {
+      console.error("Error:", error);
+    }
+    console.log(iSale);
+    console.log(addresses);
+  };
+
+  useEffect(() => {
+    if (map && addresses.length > 0) {
+      addresses.forEach((address) => {
+        addMarkerByAddress(address, map); // map 인스턴스를 직접 전달합니다.
+      });
+    }
+  }, [addresses, map]); // addresses와 map 상태의 변화를 감지합니다.
 
   const addMarkerByAddress = (address, mapInstance) => {
     // map 인스턴스를 매개변수로 받습니다.
@@ -91,31 +119,6 @@ const ISaleMapContainer = () => {
 
   return (
     <>
-      {/* <div
-        style={{
-          width: "100%",
-          height: "7vh",
-        }}
-      >
-        <button onClick={login}>로그인</button>
-      </div>
-      <div
-        style={{
-          width: "100%",
-          height: "7vh",
-        }}
-      >
-        <input id="address" type="text" placeholder="주소를 입력하세요" />
-        <button
-          onClick={
-            () =>
-              map &&
-              addMarkerByAddress(document.getElementById("address").value, map) // map 상태 확인 후 함수 호출
-          }
-        >
-          검색
-        </button>
-      </div> */}
       <div
         id="map"
         style={{
@@ -138,7 +141,7 @@ const ISaleMapContainer = () => {
             padding: "20px",
           }}
         >
-          <ISaleDetail selectedAddress={selectedAddress} />
+          <ISaleDetail selectedISale={selectedISale} />
         </div>
       ) : (
         ""
