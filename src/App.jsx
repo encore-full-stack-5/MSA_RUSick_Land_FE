@@ -2,38 +2,33 @@ import "./App.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import MainPage from "./pages/MainPage";
 import LoadingPage from "./pages/LoadingPage";
-<<<<<<< HEAD
 import ISale from "./pages/ISale";
-=======
 import NavBar from "./components/NavBar";
 import InterestPage from "./pages/InterestPage";
 import ISalePage from "./pages/ISalePage";
 import MyPage from "./pages/MyPage";
 import { useEffect } from "react";
->>>>>>> main
 
 function App() {
   useEffect(() => {
     const t = {
-      token: "eyJhbGciOiJIUzI1NiJ9.eyJpZCI6ImZmOWEwMmY1LTIwMTMtNDExMS04MmY3LTUxMjk2NTBlYjhhMCIsIm5pY2tuYW1lIjoidGVzdDMiLCJiaXJ0aERheSI6IjIwMjQtMDUtMTQiLCJleHAiOjE3MTYyNjMxNzN9.UT5NhS1cURx3ffBv2QfwIMwCtZFSP5Q7n8TAIJttyU0",
-      tokenType: "Bearer"
+      token:
+        "eyJhbGciOiJIUzI1NiJ9.eyJpZCI6ImZmOWEwMmY1LTIwMTMtNDExMS04MmY3LTUxMjk2NTBlYjhhMCIsIm5pY2tuYW1lIjoidGVzdDMiLCJiaXJ0aERheSI6IjIwMjQtMDUtMTQiLCJleHAiOjE3MTYyNjMxNzN9.UT5NhS1cURx3ffBv2QfwIMwCtZFSP5Q7n8TAIJttyU0",
+      tokenType: "Bearer",
     };
     localStorage.setItem("token", JSON.stringify(t));
-  },[])
+  }, []);
   return (
     <>
       <BrowserRouter>
-      <NavBar></NavBar>
+        <NavBar></NavBar>
         <Routes>
           <Route path="/" element={<MainPage />} />
           <Route path="/loading" element={<LoadingPage />} />
-<<<<<<< HEAD
           <Route path="/iSale" element={<ISale />} />
-=======
           <Route path="/interest" element={<InterestPage />} />
-          <Route path="/isale" element={<ISalePage />} />
+          {/* <Route path="/isale" element={<ISalePage />} /> */}
           <Route path="/mypage" element={<MyPage />} />
->>>>>>> main
         </Routes>
       </BrowserRouter>
     </>

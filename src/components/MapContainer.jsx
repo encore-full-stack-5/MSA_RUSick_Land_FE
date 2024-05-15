@@ -1,8 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 
 const MapContainer = ({ addresses, onMarkerClick }) => {
-
-
   const [map, setMap] = useState(null);
   const markersRef = useRef([]);
 
@@ -27,7 +25,7 @@ const MapContainer = ({ addresses, onMarkerClick }) => {
     markersRef.current.forEach((marker) => {
       marker.setMap(null);
     });
-        // 새로운 마커들을 추가합니다.
+    // 새로운 마커들을 추가합니다.
     addresses.forEach((address, index) => {
       window.naver.maps.Service.geocode(
         // 도로명 주소나 지번 주소 둘 다 가능
@@ -100,7 +98,6 @@ const MapContainer = ({ addresses, onMarkerClick }) => {
 
   return (
     <>
-<<<<<<< HEAD
       <div
         style={{
           width: "100%",
@@ -129,8 +126,6 @@ const MapContainer = ({ addresses, onMarkerClick }) => {
       {/* <div className="size-full">
         <button onClick={login}>로그인</button>
       </div>
-=======
->>>>>>> main
       <div>
         <input id="address" type="text" placeholder="주소를 입력하세요" />
         <button onClick={searchAddressAndMoveMap}>검색</button>

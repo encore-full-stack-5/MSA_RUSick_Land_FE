@@ -91,7 +91,7 @@ const ISaleMapContainer = () => {
 
   return (
     <>
-      <div
+      {/* <div
         style={{
           width: "100%",
           height: "7vh",
@@ -115,22 +115,23 @@ const ISaleMapContainer = () => {
         >
           검색
         </button>
-      </div>
+      </div> */}
       <div
         id="map"
         style={{
           width: "100%",
-          height: "86vh",
+          height: "89.9vh",
         }}
       ></div>
       {isVisible ? (
         <div
           style={{
+            borderTop: "1px solid #9e9e9e",
             position: "absolute",
             left: 0,
-            top: "14vh",
+            top: "10vh",
             width: "30%",
-            height: "86%",
+            height: "89.9%",
             zIndex: 100,
             backgroundColor: "white",
             overflow: "scroll",
