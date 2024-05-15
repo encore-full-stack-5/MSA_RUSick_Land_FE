@@ -1,15 +1,18 @@
 import React, { useState, useEffect } from "react";
 import LandDetail from "./LandDetail";
-import axios from "axios";
+import { getAllLand } from "../api/LandApi";
 
 const LandMapContainer = () => {
   const [selectedAddress, setSelectedAddress] = useState("");
+  const [selectedLand, setSelectedLand] = useState(null);
   const [isVisible, setIsVisible] = useState(false);
   const [map, setMap] = useState(null);
-  const [landList, setLandList] = useState([]);
+  const [addresses, setAddress] = useState([]);
+  const [land, setLand] = useState([]);
   const [markers, setMarkers] = useState([]);
 
   useEffect(() => {
+    fetchData();
     const initialLat = 37.48645289999874;
     const initialLng = 127.02067890000285;
 
@@ -21,37 +24,48 @@ const LandMapContainer = () => {
     setMap(mapInstance);
   }, []);
 
-  // landRepository에서 매물 정보를 받아옴
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const url = "http://localhost:8000/api/v1/lands";
-        const response = await axios.get(url);
-        setLandList(response.data);
-        console.log(landList.length);
-      } catch (error) {
-        alert("불러오기 실패");
-      }
-    };
-    fetchData();
-  }, []);
-
-  useEffect(() => {
-    if (map && landList.length > 0) {
-      landList.forEach((land) => {
-        addMarkerByAddress(land.landAddress, map); // map 인스턴스를 직접 전달합니다.
+    if (map) {
+      addresses.forEach((address) => {
+        addMarkerByAddress(address, map); // map 인스턴스를 직접 전달합니다.
       });
     }
-  }, [map, landList]); // map 및 landList 상태의 변화를 감지합니다.
+  }, [map]); // map 상태의 변화를 감지합니다.
 
   const onClickVisible = (address) => {
     setIsVisible(true);
     setSelectedAddress(address);
+    const foundLand = land.find((land) => land.landAddress === address);
+    setSelectedLand(foundLand);
   };
 
   const onClickVisible2 = () => {
     setIsVisible(false);
   };
+
+  const fetchData = async () => {
+    try {
+      const response = await getAllLand();
+      // console.log(response);
+      setLand(response.data);
+      const newAddresses = response.data
+        .map((el) => el.landAddress)
+        .filter((address) => !addresses.includes(address));
+      setAddress((addresses) => [...addresses, ...newAddresses]);
+    } catch (error) {
+      console.error("Error:", error);
+    }
+    // console.log(land);
+    // console.log(addresses);
+  };
+
+  useEffect(() => {
+    if (map && addresses.length > 0) {
+      addresses.forEach((address) => {
+        addMarkerByAddress(address, map);
+      });
+    }
+  }, [addresses, map]);
 
   const addMarkerByAddress = (address, mapInstance) => {
     // map 인스턴스를 매개변수로 받습니다.
@@ -77,6 +91,7 @@ const LandMapContainer = () => {
         const marker = new window.naver.maps.Marker({
           position: newCoords,
           map: mapInstance,
+          title: address,
         });
 
         // 마커에 클릭 이벤트 등록
@@ -142,17 +157,36 @@ const LandMapContainer = () => {
           검색
         </button>
       </div>
-      <div style={{ display: "flex", width: "100%" }}>
+      {isVisible ? (
         <div
-          className="z-0"
-          id="map"
           style={{
-            width: "100%",
-            height: "90vh",
+            borderTop: "1px solid #9e9e9e",
+            position: "absolute",
+            left: 0,
+            top: "10vh",
+            width: "30%",
+            height: "89.9%",
+            zIndex: 100,
+            backgroundColor: "white",
+            overflow: "scroll",
+            padding: "20px",
           }}
-        ></div>
-      </div>
+        >
+          <LandDetail selectedLand={selectedLand} />
+        </div>
+      ) : (
+        ""
+      )}
+      <div
+        className="z-0"
+        id="map"
+        style={{
+          width: "100%",
+          height: "90vh",
+        }}
+      ></div>
     </>
   );
 };
+
 export default LandMapContainer;

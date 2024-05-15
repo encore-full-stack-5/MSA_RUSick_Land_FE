@@ -26,7 +26,7 @@ function MyPage() {
     const token = JSON.parse(localStorage.getItem("token"));
     console.log(token.tokenType);
     try {
-      const url = "http://192.168.68.106:8000/api/v1/lands";
+      const url = "http://localhost:8000/api/v1/lands";
       const headers = {
         "Content-Type": "application/json",
         Authorization: token.tokenType + " " + token.token,
