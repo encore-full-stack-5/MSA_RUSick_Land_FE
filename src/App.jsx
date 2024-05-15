@@ -23,7 +23,7 @@ function App() {
       <BrowserRouter>
         <NavBar></NavBar>
         <Routes>
-          <Route path="/" element={<MainPage />} />
+          <Route path="/" element={<LandPage />} />
           <Route path="/loading" element={<LoadingPage />} />
           <Route path="/land" element={<LandPage />} />
           <Route path="/interest" element={<InterestPage />} />

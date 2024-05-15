@@ -1,10 +1,13 @@
 import React, { useState, useEffect, useRef } from "react";
 import LandDetail from "./LandDetail";
+import axios from "axios";
 
 const LandMapContainer = () => {
   const [showDetail, setShowDetail] = useState(false);
   const [selectedProperty, setSelectedProperty] = useState(null);
   const [map, setMap] = useState(null);
+  const [LandList, setLandList] = useState([]);
+
   const login = () => {
     window.location.href =
       "http://192.168.0.12:5173/signin?redirect=" +
@@ -19,6 +22,7 @@ const LandMapContainer = () => {
     const initialLat = 37.48645289999874;
     const initialLng = 127.02067890000285;
 
+    // 초기 지도 위치 설정
     const mapInstance = new window.naver.maps.Map("map", {
       center: new window.naver.maps.LatLng(initialLat, initialLng),
       zoom: 18,
@@ -31,28 +35,69 @@ const LandMapContainer = () => {
       title: "엔코아",
     });
 
-    //   // 초기 infoWindow 내용
-    //   const contentString = `
-    //   <div class="map_info" style="cursor: pointer; padding: 10px; text-align: center;">
-    //     <h1>플레이 데이터</h1>
-    //     <p>클릭하여 상세 정보를 확인</p>
-    //   </div>
-    // `;
+    // landRepository에서 매물 정보를 받아옴
+    const fetchData = async () => {
+      try {
+        const url = "http://localhost:8000/api/v1/lands";
+        const response = await axios.get(url);
+        setLandList(response.data);
+        console.log(LandList);
+      } catch (error) {
+        setError(error);
+        alert("불러오기 실패");
+      }
+    };
+    fetchData();
 
-    // // infoWindow 생성
-    // const infoWindow = new window.naver.maps.InfoWindow({
-    //   content: contentString,
-    //   maxWidth: 200,
-    //   backgroundColor: "#eee",
-    //   borderColor: "#2db400",
-    //   borderWidth: 5,
-    //   anchorSize: new window.naver.maps.Size(30, 30),
-    //   anchorSkew: true,
-    //   anchorColor: "#eee",
-    //   pixelOffset: new window.naver.maps.Point(20, -20),
+    // 매물 정보를 받아와서 land.landYN가 true 인 것들만 골라 land.address를 좌표로 변경 후 지도에 마커로 표시
+    LandList.map((land) => {
+      if (land.landYN === true) {
+        window.naver.maps.Service.geocode(
+          {
+            address: land.landAddress,
+          },
+          function (status, response) {
+            if (status === window.naver.maps.Service.Status.ERROR) {
+              return alert("주소를 찾을 수 없습니다.");
+            }
+
+            const result = response.result.items[0];
+            const newCoords = new window.naver.maps.LatLng(
+              result.point.y,
+              result.point.x
+            );
+
+            const landMarkers = new window.naver.maps.Marker({
+              position: newCoords,
+              map: mapInstance,
+              title: land.landName,
+            });
+          }
+        );
+      }
+    });
+
+    // 생성된 마커 클릭시 해당 매물의 상세 정보를 보여주는 detail 창 생성
+    // window.naver.maps.Event.addListener(landMarkers, "click", function (e) {
+    //   const selectedLand = LandList.find((land) => land.landName === e.overlay.getTitle());
+    //   if (selectedLand) {
+    //     const landDetail = {
+    //       ownerName: selectedLand.ownerName,
+    //       landName: selectedLand.landName,
+    //       landCategory: selectedLand.landCategory,
+    //       landArea: selectedLand.landArea,
+    //       landDescription: selectedLand.landDescription,
+    //       landAddress: selectedLand.landAddress,
+    //       landDetailAddress: selectedLand.landDetailAddress,
+    //       landPrice: selectedLand.landPrice,
+    //       landBuiltDate: selectedLand.landBuiltDate,
+    //     };
+    //     setSelectedProperty(landDetail);
+    //     setShowDetail(true);
+    //   }
     // });
 
-    // 마커 클릭 시 infoWindow 열고 닫기
+    // 마커 클릭 시 detail 창 띄우기
     window.naver.maps.Event.addListener(marker, "click", function (e) {
       const landDetail = {
         // 매물 상세 정보(임시 데이터)
@@ -70,17 +115,19 @@ const LandMapContainer = () => {
       setShowDetail(true);
     });
 
-    // // infoWindow가 열릴 때 클릭시 상세 정보 확인
-    // window.naver.maps.Event.addListener(infoWindow, "domready", () => {
-    //   const infoWindowDiv = document.querySelector(".map_info");
-    //   if (infoWindowDiv) {
-    //     infoWindowDiv.addEventListener("click", () => {
-    //       console.log("infoWindowDiv 클릭됨");
-    //     });
-    //   } else {
-    //     console.log("안열림");
-    //   }
-    // });
+    // 지도 클릭 시 detail 창 닫기
+    window.naver.maps.Event.addListener(mapInstance, "click", function (e) {
+      const markerPosition = marker.getPosition();
+      const clickedPosition = e.coord;
+
+      const isClickOnMarker =
+        markerPosition.lat() === clickedPosition.lat() &&
+        markerPosition.lng() === clickedPosition.lng();
+
+      if (!isClickOnMarker) {
+        setShowDetail(false);
+      }
+    });
 
     setMap(mapInstance);
     markerRef.current = marker;
@@ -109,31 +156,32 @@ const LandMapContainer = () => {
 
         // 지도의 중심을 변경
         map.setCenter(newCoords);
-
-        // 마커 위치를 업데이트
-        markerRef.current.setPosition(newCoords);
       }
     );
   };
 
+  const handleKeyPress = (event) => {
+    if (event.key === "Enter") {
+      searchAddressAndMoveMap();
+    }
+  };
+
   return (
     <>
-      <div
-        style={{
-          width: "100%",
-          height: "7vh",
-        }}
-      >
-        <button onClick={login}>로그인</button>
-      </div>
-      <div
-        style={{
-          width: "100%",
-          height: "7vh",
-        }}
-      >
-        <input id="address" type="text" placeholder="주소를 입력하세요" />
-        <button onClick={searchAddressAndMoveMap}>검색</button>
+      <div className="w-full h-10 flex items-center space-x-2">
+        <input
+          id="address"
+          type="text"
+          placeholder="도로명 주소를 입력하세요"
+          className="flex-grow border border-gray-300 rounded px-2 py-1"
+          onKeyDown={handleKeyPress}
+        />
+        <button
+          onClick={searchAddressAndMoveMap}
+          className="bg-blue-500 text-white px-4 py-1 rounded"
+        >
+          검색
+        </button>
       </div>
       <div style={{ display: "flex", width: "100%" }}>
         {showDetail && selectedProperty && (
@@ -147,7 +195,7 @@ const LandMapContainer = () => {
           id="map"
           style={{
             width: "100%",
-            height: "86vh",
+            height: "90vh",
           }}
         ></div>
       </div>
