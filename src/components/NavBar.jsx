@@ -2,12 +2,12 @@ import React from "react";
 import { Link } from "react-router-dom";
 import "../css/NavBar.css";
 function NavBar() {
-  const login = () => {
-    window.location.href =
-      "http://192.168.0.12:5173/signin?redirect=" +
-      window.location.href.split("?")[0] +
-      "loading";
-  };
+    const login = () => {
+        window.location.href =
+            "http://192.168.0.12:5173/signin?redirect=" +
+            "http://192.168.0.19:5173/" +
+            "loading";
+        };
 
   return (
     <>

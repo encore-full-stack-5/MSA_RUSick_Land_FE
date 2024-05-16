@@ -8,25 +8,55 @@ import InterestPage from "./pages/InterestPage";
 import ISalePage from "./pages/ISalePage";
 import MyPage from "./pages/MyPage";
 import { useEffect } from "react";
+<<<<<<< HEAD
 import ISaleInterest from "./components/ISaleInterest";
 import LandInterest from "./components/LandInterest";
+=======
+import axios from "axios";
+import LandPage from "./pages/LandPage";
+>>>>>>> main
 
 function App() {
+  function refresh() {
+    const token = JSON.parse(localStorage.getItem("token"));
+    if (token != null) {
+      refreshApi(token);
+    }
+  }
+
+  const refreshApi = async (token) => {
+    try {
+      const url = "http://192.168.0.19:8000/api/v1/auth/refresh";
+      const headers = {
+        "Content-Type": "application/json",
+        Authorization: token.tokenType + " " + token.token,
+      };
+      const response = await axios.get(url, { headers: headers });
+      const newToken = {
+        token: response.data.token,
+        tokenType: response.data.tokenType,
+      };
+      localStorage.setItem("token", JSON.stringify(newToken));
+      refreshTimout();
+    } catch (error) {
+      console.log(error);
+      alert("재발급 실패");
+    }
+  };
+  const refreshTimout = () => {
+    setTimeout(refresh, 180000);
+  };
   useEffect(() => {
-    const t = {
-      token:
-        "eyJhbGciOiJIUzI1NiJ9.eyJpZCI6ImZmOWEwMmY1LTIwMTMtNDExMS04MmY3LTUxMjk2NTBlYjhhMCIsIm5pY2tuYW1lIjoidGVzdDMiLCJiaXJ0aERheSI6IjIwMjQtMDUtMTQiLCJleHAiOjE3MTYyNjMxNzN9.UT5NhS1cURx3ffBv2QfwIMwCtZFSP5Q7n8TAIJttyU0",
-      tokenType: "Bearer",
-    };
-    localStorage.setItem("token", JSON.stringify(t));
+    refreshTimout();
   }, []);
   return (
     <>
       <BrowserRouter>
         <NavBar></NavBar>
         <Routes>
-          <Route path="/" element={<MainPage />} />
+          <Route path="/" element={<LandPage />} />
           <Route path="/loading" element={<LoadingPage />} />
+          <Route path="/land" element={<LandPage />} />
           <Route path="/iSale" element={<ISale />} />
           {/* <Route path="/interest" element={<InterestPage />} /> */}
           {/* <Route path="/isale" element={<ISalePage />} /> */}
