@@ -9,47 +9,49 @@ import ISalePage from "./pages/ISalePage";
 import MyPage from "./pages/MyPage";
 import { useEffect } from "react";
 import axios from "axios";
+import LandPage from "./pages/LandPage";
 
 function App() {
   function refresh() {
     const token = JSON.parse(localStorage.getItem("token"));
-    if(token != null){
+    if (token != null) {
       refreshApi(token);
     }
-  };
-  
+  }
+
   const refreshApi = async (token) => {
     try {
       const url = "http://192.168.0.19:8000/api/v1/auth/refresh";
       const headers = {
         "Content-Type": "application/json",
-        "Authorization": token.tokenType + " " + token.token
+        Authorization: token.tokenType + " " + token.token,
       };
       const response = await axios.get(url, { headers: headers });
       const newToken = {
         token: response.data.token,
-        tokenType: response.data.tokenType
+        tokenType: response.data.tokenType,
       };
       localStorage.setItem("token", JSON.stringify(newToken));
-      refreshTimout()
+      refreshTimout();
     } catch (error) {
       console.log(error);
       alert("재발급 실패");
     }
   };
-  const refreshTimout=()=>{
+  const refreshTimout = () => {
     setTimeout(refresh, 180000);
-  }
+  };
   useEffect(() => {
     refreshTimout();
-  },[])
+  }, []);
   return (
     <>
       <BrowserRouter>
         <NavBar></NavBar>
         <Routes>
-          <Route path="/" element={<MainPage />} />
+          <Route path="/" element={<LandPage />} />
           <Route path="/loading" element={<LoadingPage />} />
+          <Route path="/land" element={<LandPage />} />
           <Route path="/iSale" element={<ISale />} />
           <Route path="/interest" element={<InterestPage />} />
           {/* <Route path="/isale" element={<ISalePage />} /> */}
