@@ -14,3 +14,8 @@ export const getLandPrice = async (landId) => {
   const res = await api(`lands/price/${landId}`, "get");
   return res;
 };
+
+export const addOrDeleteInterestLand = async (id) => {
+  const res = await api(`/lands/interests/${id}`, "post");
+  return res;
+};

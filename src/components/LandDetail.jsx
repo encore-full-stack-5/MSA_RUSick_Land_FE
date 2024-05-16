@@ -1,19 +1,47 @@
 import React, { useEffect, useState } from "react";
-import { getLandDetail, getLandPrice } from "../api/LandApi";
+import {
+  getLandDetail,
+  getLandPrice,
+  addOrDeleteInterestLand,
+} from "../api/LandApi";
 
-const LandDetail = ({ selectedLand }) => {
+const LandDetail = ({ selectedLand, onClose }) => {
   const [land, setLand] = useState({});
   const [isStarred, setIsStarred] = useState(false);
   const [landPrice, setLandPrice] = useState(null);
   const [alertMessage, setAlertMessage] = useState("");
 
-  // 관심 매물 알람 메시지
-  const handleStarClick = () => {
-    setIsStarred(!isStarred);
-    if (!isStarred) {
-      setAlertMessage("관심 매물로 등록되었습니다!");
-    } else {
-      setAlertMessage("관심 매물에서 삭제되었습니다");
+  useEffect(() => {
+    // 로컬 스토리지에서 별 상태 불러오기
+    const starredLands = JSON.parse(localStorage.getItem("starredLands")) || [];
+    setIsStarred(starredLands.includes(selectedLand.landId));
+  }, [selectedLand.landId]);
+
+  // 관심 매물 등록 및 알람 메시지
+  const handleStarClick = async () => {
+    const updatedStarredState = !isStarred;
+    setIsStarred(updatedStarredState);
+
+    try {
+      await addOrDeleteInterestLand(selectedLand.landId);
+
+      // 로컬 스토리지에 별 상태 저장
+      const starredLands =
+        JSON.parse(localStorage.getItem("starredLands")) || [];
+      if (updatedStarredState) {
+        starredLands.push(selectedLand.landId);
+        setAlertMessage("관심 매물로 등록되었습니다!");
+      } else {
+        const index = starredLands.indexOf(selectedLand.landId);
+        if (index !== -1) {
+          starredLands.splice(index, 1);
+        }
+        setAlertMessage("관심 매물에서 삭제되었습니다");
+      }
+      localStorage.setItem("starredLands", JSON.stringify(starredLands));
+    } catch (error) {
+      console.error("Error adding or deleting interest land:", error);
+      setAlertMessage("작업을 수행하는 중 오류가 발생했습니다.");
     }
   };
 
@@ -21,7 +49,7 @@ const LandDetail = ({ selectedLand }) => {
     if (alertMessage !== "") {
       const timer = setTimeout(() => {
         setAlertMessage("");
-      }, 1500); // 2초 후에 알림 메시지 지우기
+      }, 1500); // 1.5초 후에 알림 메시지 지우기
       return () => clearTimeout(timer); // 타이머 정리
     }
   }, [alertMessage]);
@@ -111,6 +139,20 @@ const LandDetail = ({ selectedLand }) => {
               <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.96a1 1 0 00.95.69h4.162c.969 0 1.371 1.24.588 1.81l-3.357 2.436a1 1 0 00-.364 1.118l1.286 3.96c.3.921-.755 1.688-1.538 1.118L10 13.347l-3.357 2.436c-.783.57-1.838-.197-1.538-1.118l1.286-3.96a1 1 0 00-.364-1.118L2.67 9.387c-.783-.57-.381-1.81.588-1.81h4.162a1 1 0 00.95-.69l1.286-3.96z" />
             </svg>
           </button>
+          <button onClick={onClose} className="focus:outline-none text-red-500">
+            <svg
+              className="w-6 h-6"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                fillRule="evenodd"
+                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-10.293a1 1 0 00-1.414-1.414L10 8.586 7.707 6.293a1 1 0 00-1.414 1.414L8.586 10l-2.293 2.293a1 1 0 001.414 1.414L10 11.414l2.293 2.293a1 1 0 001.414-1.414L11.414 10l2.293-2.293z"
+                clipRule="evenodd"
+              />
+            </svg>
+          </button>
         </div>
         <div className="mb-4">
           <p className="text-gray-700 mb-2">
@@ -139,21 +181,29 @@ const LandDetail = ({ selectedLand }) => {
             onClick={handlePriceInquiryClick}
             className="w-full py-2 px-4 mb-4 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition duration-300"
           >
-            시세조회
+            매매조회
           </button>
-          {landPrice && (
-            <div className="bg-gray-100 p-4 rounded-lg">
-              <h2 className="text-xl font-semibold mb-2">시세조회 결과</h2>
-              <ul>
-                {landPrice.map((entry, index) => (
-                  <li key={index} className="mb-2">
-                    <span className="font-semibold">{entry.sellLogDate}:</span>{" "}
-                    {entry.price}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
+          {landPrice !== null &&
+            (landPrice.length > 0 ? (
+              <div className="bg-gray-100 p-4 rounded-lg">
+                <h2 className="text-xl font-semibold mb-2">매매 내역</h2>
+                <ul>
+                  {landPrice.map((entry, index) => (
+                    <li key={index} className="mb-2">
+                      <span className="font-semibold">
+                        {entry.sellLogDate}:
+                      </span>{" "}
+                      {entry.price}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ) : (
+              <div className="bg-gray-100 p-4 rounded-lg">
+                <h2 className="text-xl font-semibold mb-2">매매 내역</h2>
+                <p className="text-gray-700">매매내역없음</p>
+              </div>
+            ))}
         </div>
       </div>
     </>

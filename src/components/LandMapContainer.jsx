@@ -46,17 +46,15 @@ const LandMapContainer = () => {
   const fetchData = async () => {
     try {
       const response = await getAllLand();
-      // console.log(response);
-      setLand(response.data);
-      const newAddresses = response.data
+      const validLand = response.data.filter((el) => el.landYN == true);
+      setLand(validLand);
+      const newAddresses = validLand
         .map((el) => el.landAddress)
         .filter((address) => !addresses.includes(address));
       setAddress((addresses) => [...addresses, ...newAddresses]);
     } catch (error) {
       console.error("Error:", error);
     }
-    // console.log(land);
-    // console.log(addresses);
   };
 
   useEffect(() => {
@@ -129,7 +127,7 @@ const LandMapContainer = () => {
         const newCoords = new window.naver.maps.LatLng(result.y, result.x);
 
         // 지도의 중심을 변경
-        map.setCenter(newCoords);
+        map.panTo(newCoords);
       }
     );
   };
@@ -154,7 +152,7 @@ const LandMapContainer = () => {
           onClick={searchAddressAndMoveMap}
           className="bg-blue-500 text-white px-4 py-1 rounded"
         >
-          검색
+          이동
         </button>
       </div>
       {isVisible ? (
@@ -165,14 +163,17 @@ const LandMapContainer = () => {
             left: 0,
             top: "10vh",
             width: "30%",
-            height: "89.9%",
+            height: "95%",
             zIndex: 100,
             backgroundColor: "white",
             overflow: "scroll",
             padding: "20px",
           }}
         >
-          <LandDetail selectedLand={selectedLand} />
+          <LandDetail
+            selectedLand={selectedLand}
+            onClose={() => setIsVisible(false)}
+          />
         </div>
       ) : (
         ""
