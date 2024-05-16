@@ -5,6 +5,7 @@ import axios from "axios";
 import InterestDetail from "./InterestDetail"
 import ISaleDetail from "./ISaleDetail";
 import { getInterestland } from "../api/landInterest";
+import InterestLandDetail from "./InterestLandDetail";
 
 
 
@@ -29,7 +30,7 @@ function landInterest() {
   const [isVisible, setIsVisible] = useState(false);
   const [markers, setMarkers] = useState([]);
   const [iSale, setISale] = useState([]);
-  const [selectedISale, setSelectedISale] = useState(null);
+  const [selectedLand, setSelectedLand] = useState(null);
 
 
 
@@ -40,8 +41,8 @@ function landInterest() {
 
   useEffect(() => {
     fetchData();
-    const initialLat = 37.5525;
-    const initialLng = 127.0311;
+    const initialLat = 37.48645289999874;
+    const initialLng = 127.02067890000285;
 
     const mapInstance = new window.naver.maps.Map("map", {
       center: new window.naver.maps.LatLng(initialLat, initialLng),
@@ -62,9 +63,9 @@ function landInterest() {
   const onClickVisible = (address) => {
     setIsVisible(true);
     setSelectedAddress(address);
-    const foundISale = interest.find((interest) => interest.iSaleAddress === address);
-    console.log(foundISale);
-    setSelectedISale(foundISale);
+    const foundLand = interest.find((interest) => interest.landAddress === address);
+    console.log(foundLand);
+    setSelectedLand(foundLand);
   };
   const onClickVisible2 = () => {
     setIsVisible(false);
@@ -80,14 +81,13 @@ function landInterest() {
       console.log(response);
       setInterest(response.data);
       const newAddresses = response.data
-      .map((el) => el.iSaleAddress)
+      .map((el) => el.landAddress)
       .filter((address) => !addresses.includes(address));
     setAddress((addresses) => [...addresses, ...newAddresses]);
       
     } catch (error) {
       setError(error);
       console.log(error);
-      alert("실패");
     }
   };
 
@@ -192,13 +192,14 @@ function landInterest() {
             </button>
           </div>
           <div style={{ height: "569px", border: "1px solid #e9e9e9" }}>
-          {interest.map((item, index) => (
+          {interest === null ? ("관심 매물이 없습니다.") :
+          (interest.map((item, index) => (
               <div key={index} style={{ padding: "10px", borderBottom: "1px solid #e9e9e9" }}>
-                <h3 style={{fontWeight:"600"}}>{item.iSaleName}</h3>
-                <h3 style={{fontSize:"17px", color:"#4c94e8", fontWeight:"600"}}>분양가 {item.iSaleSellPrice}원</h3>
-                <h3>{item.iSaleAddress}</h3>
+                <h3 style={{fontWeight:"600"}}>{item.landName}</h3>
+                <h3 style={{fontSize:"17px", color:"#4c94e8", fontWeight:"600"}}>매물가격 {item.landPrice}원</h3>
+                <h3>{item.landAddress}</h3>
               </div>
-            ))}
+            )))}
 
 
           </div>
@@ -226,7 +227,7 @@ function landInterest() {
             padding: "20px",
           }}
         >
-          <InterestDetail selectedISale={selectedISale} />
+          <InterestLandDetail selectedLand={selectedLand} />
         </div>
       ) : (
         ""

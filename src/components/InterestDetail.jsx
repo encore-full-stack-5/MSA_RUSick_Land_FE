@@ -108,13 +108,13 @@ const InterestDetail = ({ selectedISale }) => {
           </tr>
         </tbody>
       </table>
-      <div>
+      {/* <div>
         <h1>청약일정</h1>
         <p>공고 ~~~~</p>
         <p>접수 ~~~~</p>
         <p>발표 ~~~~</p>
         <p>계약 ~~~~</p>
-      </div>
+      </div> */}
     </>
   );
 };
