@@ -117,13 +117,65 @@ const ISaleMapContainer = () => {
     // 이곳에서 패널의 상태나 선택된 주소의 변화에 따라 추가적인 로직을 구현할 수 있습니다.
   }, [selectedAddress]);
 
+  const searchAddressAndMoveMap = () => {
+    const address = document.getElementById("address").value;
+    if (!address) return;
+    window.naver.maps.Service.geocode(
+      // 도로명 주소나 지번 주소 둘 다 가능
+      { query: address },
+      (status, response) => {
+        if (
+          status !== window.naver.maps.Service.Status.OK ||
+          !response.v2.addresses.length
+        ) {
+          return alert("주소를 찾을 수 없습니다.");
+        }
+        // 주소 검색 결과
+        const result = response.v2.addresses[0];
+        // 주소 검색 후 새로운 좌표 생성
+        const newCoords = new window.naver.maps.LatLng(result.y, result.x);
+        // 지도의 중심을 변경
+        map.panTo(newCoords);
+      }
+    );
+    document.getElementById("address").value = "";
+  };
+
+  const handleKeyPress = (event) => {
+    if (event.key === "Enter") {
+      searchAddressAndMoveMap();
+    }
+  };
+
   return (
     <>
       <div
+        className="w-full flex items-center space-x-2"
+        style={{
+          height: "5vh",
+        }}
+      >
+        <input
+          id="address"
+          type="text"
+          placeholder="도로명 주소를 입력하세요"
+          className="flex-grow border border-gray-300 rounded px-2 py-1"
+          onKeyDown={handleKeyPress}
+        />
+        <button
+          onClick={searchAddressAndMoveMap}
+          className="bg-blue-500 text-white px-4 py-1 rounded"
+        >
+          이동
+        </button>
+      </div>
+
+      <div
+        className="z-0"
         id="map"
         style={{
           width: "100%",
-          height: "89.9vh",
+          height: "84.9vh",
         }}
       ></div>
       {isVisible ? (
@@ -133,7 +185,7 @@ const ISaleMapContainer = () => {
             position: "absolute",
             left: 0,
             top: "10vh",
-            width: "30%",
+            width: "31%",
             height: "89.9%",
             zIndex: 100,
             backgroundColor: "white",
