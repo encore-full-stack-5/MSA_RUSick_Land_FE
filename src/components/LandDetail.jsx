@@ -3,6 +3,7 @@ import {
   getLandDetail,
   getLandPrice,
   addOrDeleteInterestLand,
+  getInterestLand,
 } from "../api/LandApi";
 
 const LandDetail = ({ selectedLand, onClose }) => {
@@ -11,34 +12,27 @@ const LandDetail = ({ selectedLand, onClose }) => {
   const [landPrice, setLandPrice] = useState(null);
   const [alertMessage, setAlertMessage] = useState("");
 
-  useEffect(() => {
-    // 로컬 스토리지에서 별 상태 불러오기
-    const starredLands = JSON.parse(localStorage.getItem("starredLands")) || [];
-    setIsStarred(starredLands.includes(selectedLand.landId));
-  }, [selectedLand.landId]);
+  const fetchData = async () => {
+    try {
+      const response = await getLandDetail(selectedLand.landId);
+      setIsStarred((await getInterestLand(selectedLand.landId)).data);
+      setLand(response.data);
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
 
   // 관심 매물 등록 및 알람 메시지
   const handleStarClick = async () => {
-    const updatedStarredState = !isStarred;
-    setIsStarred(updatedStarredState);
-
     try {
       await addOrDeleteInterestLand(selectedLand.landId);
+      setIsStarred((await getInterestLand(selectedLand.landId)).data);
 
-      // 로컬 스토리지에 별 상태 저장
-      const starredLands =
-        JSON.parse(localStorage.getItem("starredLands")) || [];
-      if (updatedStarredState) {
-        starredLands.push(selectedLand.landId);
+      if (!isStarred) {
         setAlertMessage("관심 매물로 등록되었습니다!");
       } else {
-        const index = starredLands.indexOf(selectedLand.landId);
-        if (index !== -1) {
-          starredLands.splice(index, 1);
-        }
         setAlertMessage("관심 매물에서 삭제되었습니다");
       }
-      localStorage.setItem("starredLands", JSON.stringify(starredLands));
     } catch (error) {
       console.error("Error adding or deleting interest land:", error);
       setAlertMessage("작업을 수행하는 중 오류가 발생했습니다.");
@@ -58,15 +52,6 @@ const LandDetail = ({ selectedLand, onClose }) => {
   useEffect(() => {
     fetchData();
   }, []);
-
-  const fetchData = async () => {
-    try {
-      const response = await getLandDetail(selectedLand.landId);
-      setLand(response.data);
-    } catch (error) {
-      console.error("Error:", error);
-    }
-  };
 
   // 시세조회 버튼 클릭 시 시세 조회 api 호출
   const handlePriceInquiryClick = async () => {
@@ -116,7 +101,6 @@ const LandDetail = ({ selectedLand, onClose }) => {
       })
     : "";
 
-  // 매물의 상세 정보를 맵 위에 왼쪽에 표시
   return (
     <>
       <div className="z-10 w-full max-w-lg mx-auto p-6 bg-white rounded-xl shadow-lg font-sans">

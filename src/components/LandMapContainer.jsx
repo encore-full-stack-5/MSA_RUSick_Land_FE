@@ -130,6 +130,7 @@ const LandMapContainer = () => {
         map.panTo(newCoords);
       }
     );
+    document.getElementById("address").value = "";
   };
 
   const handleKeyPress = (event) => {
@@ -140,7 +141,10 @@ const LandMapContainer = () => {
 
   return (
     <>
-      <div className="w-full h-10 flex items-center space-x-2">
+      <div
+        className="w-full flex items-center space-x-2"
+        style={{ height: "5vh" }}
+      >
         <input
           id="address"
           type="text"
@@ -183,7 +187,7 @@ const LandMapContainer = () => {
         id="map"
         style={{
           width: "100%",
-          height: "90vh",
+          height: "84.9vh",
         }}
       ></div>
     </>
