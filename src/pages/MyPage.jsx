@@ -56,10 +56,9 @@ function MyPage() {
       }
       await axios.post(url, formData, { headers: headers })
         .then(res => {
-          if(res.data != null) {
-            alert(res.data);
+          if(res.data != "") {
+            alert("해당 매물의 주인이 아닙니다.");
           }else {
-            // console.log(res.data);
             alert("매물 등록에 성공하였습니다.");
             window.location.reload();
           }
@@ -71,6 +70,11 @@ function MyPage() {
   }
 
   useEffect(() => {
+    if(localStorage.getItem("token") == null) {
+      alert("로그인을 먼저 해야합니다.")
+      window.location.href =
+          "http://192.168.0.19:5173"
+    }
     const fetchData = async () => {
       try {
         const token = JSON.parse(localStorage.getItem("token"));
