@@ -1,13 +1,23 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import "../css/NavBar.css";
 function NavBar() {
-  const login = () => {
-    window.location.href =
-      "http://192.168.0.12:5173/signin?redirect=" +
-      window.location.href.split("?")[0] +
-      "loading";
-  };
+    const [loginState, setLoginState] = useState(null);
+    const login = () => {
+        if(loginState) {
+            localStorage.removeItem("token");
+            window.location.href =
+                "http://192.168.0.19:5173"
+        }else {
+            window.location.href =
+                "http://192.168.0.12:5173/signin?redirect=" +
+                "http://192.168.0.19:5173/" +
+                "loading";
+            };
+        }
+    useEffect(() => {
+        setLoginState(localStorage.getItem("token") == null ? false : true);
+    }, []);
 
   return (
     <>
@@ -20,7 +30,9 @@ function NavBar() {
       >
         <Link to={"/"}>네이버 부동산</Link>
         <div className="size-full; inline-block">
-          <button onClick={login}>로그인</button>
+            <button onClick={login}>
+                {loginState? "로그아웃" : "로그인"}
+            </button>
         </div>
       </div>
       <div

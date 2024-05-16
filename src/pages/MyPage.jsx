@@ -31,8 +31,15 @@ function MyPage() {
         "Content-Type": "application/json",
         "Authorization": token.tokenType + " " + token.token
       }
-      await axios.post(url, formData, { headers: headers });
-      alert("매물을 성공적으로 등록하였습니다.");
+      await axios.post(url, formData, { headers: headers })
+        .then(res => {
+          if(res.data != null) {
+            alert(res.data);
+          }else {
+            alert("매물 등록에 성공하였습니다.");
+            window.location.reload();
+          }
+        });
     }catch (error) {
       setError(error);
       alert("매물 등록에 실패하였습니다.");
