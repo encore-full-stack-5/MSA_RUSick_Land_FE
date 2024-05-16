@@ -60,24 +60,29 @@ function MyPage() {
       const url = "http://localhost:8000/api/v1/lands";
       const headers = {
         "Content-Type": "application/json",
-        Authorization: token.tokenType + " " + token.token,
-      };
-      await axios.post(url, formData, { headers: headers }).then((res) => {
-        if (res.data != null) {
-          alert(res.data);
-        } else {
-          // console.log(res.data);
-          alert("매물 등록에 성공하였습니다.");
-          window.location.reload();
-        }
-      });
-    } catch (error) {
+        "Authorization": token.tokenType + " " + token.token
+      }
+      await axios.post(url, formData, { headers: headers })
+        .then(res => {
+          if(res.data != "") {
+            alert("해당 매물의 주인이 아닙니다.");
+          }else {
+            alert("매물 등록에 성공하였습니다.");
+            window.location.reload();
+          }
+        });
+    }catch (error) {
       setError(error);
       alert("매물 등록에 실패하였습니다.");
     }
   };
 
   useEffect(() => {
+    if(localStorage.getItem("token") == null) {
+      alert("로그인을 먼저 해야합니다.")
+      window.location.href =
+          "http://192.168.0.19:5173"
+    }
     const fetchData = async () => {
       try {
         const token = JSON.parse(localStorage.getItem("token"));

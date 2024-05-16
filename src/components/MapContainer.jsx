@@ -105,7 +105,6 @@ const MapContainer = ({ addresses, onMarkerClick }) => {
           height: "7vh",
         }}
       >
-        <button onClick={login}>로그인</button>
       </div>
       <div
         style={{
