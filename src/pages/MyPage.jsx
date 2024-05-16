@@ -37,13 +37,13 @@ function MyPage() {
     }));
   };
 
-  const handleTransactionDetailsChange = (e) => {
-    const { name, value } = e.target;
-    setTransactionDetails((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
-  };
+  // const handleTransactionDetailsChange = (e) => {
+  //   const { name, value } = e.target;
+  //   setTransactionDetails((prevData) => ({
+  //     ...prevData,
+  //     [name]: value,
+  //   }));
+  // };
 
   const handleTransactionDetailsChange = (e) => {
     const { name, value } = e.target;
