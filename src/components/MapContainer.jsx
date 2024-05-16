@@ -84,6 +84,7 @@ const MapContainer = ({ addresses, onMarkerClick }) => {
 
         // 주소 검색 결과
         const result = response.v2.addresses[0];
+
         // 주소 검색 후 새로운 좌표 생성
         const newCoords = new window.naver.maps.LatLng(result.y, result.x);
 
