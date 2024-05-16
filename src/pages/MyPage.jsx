@@ -45,13 +45,13 @@ function MyPage() {
     }));
   };
 
-  const handleTransactionDetailsChange = (e) => {
-    const { name, value } = e.target;
-    setTransactionDetails((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
-  };
+  // const handleTransactionDetailsChange = (e) => {
+  //   const { name, value } = e.target;
+  //   setTransactionDetails((prevData) => ({
+  //     ...prevData,
+  //     [name]: value,
+  //   }));
+  // };
 
   const addLandRequest = async () => {
     const token = JSON.parse(localStorage.getItem("token"));
